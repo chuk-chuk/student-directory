@@ -21,12 +21,6 @@ def print_header
 end
 
 def print(students)
-
-	# i = 0
-	# while i < students.length
-	# 	puts "#{students[i][:name]} #{students[i][:cohort]} cohort"
-	# 	i += 1
-	# end
   person = 0
 	while person < students.length
 		puts "#{person + 1}.#{students[person][:name]} #{students[person][:cohort]} cohort"
