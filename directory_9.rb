@@ -2,6 +2,8 @@
 def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
+  puts "3. Save the list to students.csv"
+  puts "4. Load the list from students.csv"
   puts "9. Exit"
 end
 
@@ -17,6 +19,10 @@ def process(selection)
       input_students
     when "2"
       show_students
+    when "3"
+      save_students
+    when "4"
+      load_students
     when "9"
       exit
     else
@@ -51,9 +57,30 @@ def input_students
     @students << {name: name, cohort: cohort, country: country, gender: gender, age: age}
     puts "We have a total of #{@students.count} student" if @students.count == 1
     puts "We have a total of #{@students.count} students" if @students.count > 1
-    puts "Type a name of the next student or finish by hitting a return key:"
+    puts "Type a name of the next student or hit enter and select the next option from the menu:"
     name = gets.delete!("\n").capitalize
   end
+end
+
+def load_students
+  file = File.open("students.csv", "r")
+  file.readlines.each do |line|
+    name, gender, age, cohort, country = line.chomp.split(",")
+    @students << {name: name.to_sym, cohort: cohort.to_sym, country: country.to_sym, gender: gender.to_sym, age: age.to_sym}
+  end
+  file.close
+end
+
+def save_students
+  #open the file for writing
+  file = File.open("students.csv", "w")
+  #iterate over the array of students
+  @students.each do |student|
+    student_date = [student[:name], student[:gender], student[:age], student[:cohort], student[:country]]
+    csv_line = student_date.join(",")
+    file.puts csv_line
+  end
+  file.close
 end
 
 def print_header
