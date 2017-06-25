@@ -1,3 +1,5 @@
+require 'csv'
+
 @students = Array.new # an empty array accessible to all methods
 def print_menu
   puts "1. Input the students"
@@ -47,13 +49,17 @@ def input_students
     gender = STDIN.gets.chomp.capitalize
     puts "Age:"
     age = STDIN.gets.chomp.capitalize
-
-    @students << {name: name, cohort: cohort, country: country, gender: gender, age: age}
+    add_students(name, gender, age, cohort, country)
+  #  @students << {name: name, cohort: cohort, country: country, gender: gender, age: age}
     puts "We have a total of #{@students.count} student" if @students.count == 1
     puts "We have a total of #{@students.count} students" if @students.count > 1
     puts "Type a name of the next student or hit enter and select the next option from the menu:"
     name = STDIN.gets.chomp.capitalize
   end
+end
+
+def add_students(name, gender, age, cohort, country)
+  @students << {name: name, cohort: cohort, country: country, gender: gender, age: age}
 end
 
 def show_students
@@ -87,23 +93,20 @@ end
 
 def save_students
   #open the file for writing
-  file = File.open("students.csv", "w")
+  CSV.open("students.csv", "w") do |csv|
   #iterate over the array of students
-  @students.each do |student|
-    student_date = [student[:name], student[:gender], student[:age], student[:cohort], student[:country]]
-    csv_line = student_date.join(",")
-    file.puts csv_line
+    @students.each do |student|
+    csv << [student[:name], student[:gender], student[:age], student[:cohort], student[:country]]
+    end
   end
-  file.close
 end
 
 def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-    name, gender, age, cohort, country = line.chomp.split(",")
-    @students << {name: name.to_sym, cohort: cohort.to_sym, country: country.to_sym, gender: gender.to_sym, age: age.to_sym}
+  CSV.foreach(filename) do |row|
+    name, gender, age, cohort, country = row
+    add_students(name, gender, age, cohort, country)
+    #@students << {name: name, cohort: cohort.to_sym, country: country, gender: gender, age: age}
   end
-  file.close
 end
 
 def try_load_students
